@@ -1,0 +1,438 @@
+<html>
+<head>
+<meta charset='utf8' />
+<script src="jsmodules/jquery-1.11.0.min.js"></script>
+<script src="jsmodules/svg.min.js"></script>
+<script src="jsmodules/svg.draggable.min.js"></script>
+<script src="jsmodules/svg.math.js"></script>
+<script src="jsmodules/svg.export.js"></script>
+<script src="jsmodules/arg.js.v1.1.min.js"></script>
+
+<script src="DraggablePoints.js"></script>
+<script src="ShapeCollection.js"></script>
+
+<script src="Economics.js"></script>
+
+<script src="events.js"></script>
+
+<link rel='stylesheet' href='style.css' />
+<title>Competitive Market</title>
+
+<style>
+a { cursor: pointer; color: blue; text-decoration: underline; }
+a:hover,a.hover {  }
+#status {text-align:left; font-size:15px;}
+</style>
+
+</head>
+<body>
+
+
+
+<table><tr><td style='width:50%'>
+	<svg id='svg' style="background:#ffa; border:solid #888 3px"></svg>
+	<p id='status'></p>
+	<!-- div class='reference'>
+	<h2>References</h2>
+	<ul>
+	<li>Wikipedia, <a href='https://en.wikipedia.org/wiki/Competitive_equilibrium'>Competitive equilibrium</a>.</li>
+	<li>Wikipedia, <a href='https://en.wikipedia.org/wiki/Double_auction'>Double auction</a>.</li>
+	</ul>
+	</div -->
+
+</td><td style='width:50%; font-size:14px'>
+<h1>Competitive Market Simulation</h1>
+<p>
+The square at your left represents a competitive market with two products: X, Y, and Money. 
+<p>
+The black ring represents the price vector; its coordinates are (p<sub>x</sub>,p<sub>y</sub>).
+<p>
+Each red disc represents an agent with unit demand; its coordinates are (u<sub>x</sub>,u<sub>y</sub>). 
+The net utility when buying X is u<sub>x</sub>-p<sub>x</sub>; when buying Y is u<sub>y</sub>-p<sub>y</sub>; and when buying nothing the utility is 0.
+<p>
+Agents in the green area want to buy X; in the blue area - to buy Y; and in the yellow area - to buy nothing.
+
+<h2>What to do?</h2>
+<ul>
+<li>Change the prices by moving the black ring around. Watch the changes in demand. Can you find equilibrium prices?</li>
+<li>Find minimum equilibrium prices in: <button class='calcMinWalrasianPrice'>whole market</button> <button class='calcMinWalrasianPriceHalfMarket'>half market</button>
+<li>Change the supplies of X and/or Y: <button class='changeSupply'>x-1</button> <button class='changeSupply'>x+1</button> <button class='changeSupply'>y-1</button> <button class='changeSupply'>y+1</button>
+<li>Change the values of the suppliers of X/Y: <button class='changeSupplyValue'>x-1</button> <button class='changeSupplyValue'>x+1</button> <button class='changeSupplyValue'>y-1</button> <button class='changeSupplyValue'>y+1</button>
+
+<li>Add agents: <button class='addAgents'>right</button><button class='addAgents'>left</button><button class='addAgents'>top</button><button class='addAgents'>bottom</button>
+                <button class='addAgents'>BR</button><button class='addAgents'>BL</button><button class='addAgents'>TR</button><button class='addAgents'>TL</button>
+</li>
+<li>Remove an agent by dragging it over the left or top border.</li>
+<li>Save your configuration by copying the <a id='permalink' href=''>PermaLink</a>.</li>
+<li><button class='export'>Export</button> then right-click to save the image: <canvas id='canvas' style='width:10px;height:10px;border:solid black 1px'></canvas></li>
+<li><button class='randomize'>Move agents randomly</button>;</li>
+<li>Remove all agents by clicking <button class='clear'>Clear</button>.</li>
+</ul>
+
+<h2>Test cases</h2>
+ <ul>
+<li>Support: 
+	<a class='example' href='?points=368,89,red:365,327,red:369,335,red:369,226,red:370,141,red:371,115,red:373,69,red:372,166,red:370,398,red:368,337,red:369,366,red:369,152,red:365,214,red:366,207,red:369,136,red:381,103,red:366,289,red:369,223,red:369,66,red:374,279,red:366,103,red:390,140,red:368,162,red:366,359,red:372,137,red:368,302,red:369,326,red:375,118,red:375,94,red:373,226,red:370,393,red:368,144,red:374,259,red:374,388,red:374,105,red:374,249,red:370,128,red:370,317,red:373,93,red:373,337,red:371,312,red:373,148,red:366,201,red:384,79,red:368,310,red:366,131,red:371,228,red:370,54,red:372,234,red:385,106,red:366,204,red:373,143,red:369,332,red:370,176,red:368,192,red:374,245,red:368,124,red:374,125,red:389,66,red:373,398,red:371,273,red:370,361,red:373,226,red:368,279,red:372,58,red:365,59,red:368,303,red:368,356,red:368,191,red:368,204,red:375,262,red:367,49,red:367,45,red:371,364,red:367,389,red:384,48,red:387,58,red:370,300,red:371,374,red:368,192,red:273,33,red:150,16,red:258,22,red:338,90,red:30,33,red:281,17,red:332,105,red:106,30,red:78,30,red:140,32,red:14,25,red:224,29,red:267,12,red:58,27,red:42,35,red:199,19,red:87,20,red:170,25,red:328,121,red:122,28,red&prices=339,743&supplies=80,10&max_ux=400&max_uy=800'>H-V support</a> ;
+	<a class='example' href='?points=368,89,red:365,327,red:369,335,red:369,226,red:370,141,red:371,115,red:373,69,red:372,166,red:370,398,red:368,337,red:369,366,red:369,152,red:365,214,red:366,207,red:369,136,red:381,103,red:366,289,red:369,223,red:369,66,red:374,279,red:366,103,red:390,140,red:368,162,red:366,359,red:372,137,red:368,302,red:369,326,red:375,118,red:375,94,red:373,226,red:370,393,red:368,144,red:374,259,red:374,388,red:374,105,red:374,249,red:370,128,red:370,317,red:373,93,red:373,337,red:371,312,red:373,148,red:366,201,red:384,79,red:368,310,red:366,131,red:371,228,red:370,54,red:372,234,red:385,106,red:366,204,red:373,143,red:369,332,red:370,176,red:368,192,red:374,245,red:368,124,red:374,125,red:389,66,red:373,398,red:371,273,red:370,361,red:373,226,red:368,279,red:372,58,red:365,59,red:368,303,red:368,356,red:368,191,red:368,204,red:375,262,red:367,49,red:354,20,red:371,364,red:367,389,red:384,48,red:387,58,red:370,300,red:371,374,red:368,192,red:273,33,red:150,16,red:258,22,red:356,175,red:30,33,red:281,17,red:38,60,red:115,42,red:84,40,red:140,32,red:14,35,red:226,39,red:251,44,red:62,38,red:42,35,red:199,19,red:87,20,red:170,25,red:18,59,red:129,41,red&prices=326,731&supplies=80,10&max_ux=400&max_uy=800'>H-D support</a> 
+</li>
+<li>Adding X supply reduces Y welfare: 
+	<a class='example' href='?points=370,368,red:369,371,red:374,371,red:365,374,red:373,369,red:373,367,red:365,375,red:372,366,red:371,373,red:372,370,red:374,366,red:370,371,red:368,368,red:369,373,red:368,365,red:375,369,red:373,375,red:365,374,red:370,369,red:368,371,red:366,366,red:366,367,red:370,372,red:369,370,red:373,371,red:372,369,red:371,370,red:370,366,red:370,371,red:367,374,red:366,371,red:370,373,red:370,365,red:368,371,red:369,370,red:375,373,red:369,368,red:366,372,red:367,368,red:369,373,red:366,368,red:367,370,red:367,374,red:366,372,red:367,372,red:370,375,red:371,371,red:373,365,red:367,374,red:368,370,red:370,371,red:374,372,red:365,366,red:368,374,red:367,371,red:374,369,red:374,369,red:373,373,red:369,370,red:367,367,red:370,373,red:374,370,red:370,365,red:375,369,red:366,372,red:366,373,red:372,372,red:369,370,red:367,371,red:372,368,red:374,369,red:374,369,red:369,31,red:367,373,red:367,369,red:375,366,red:369,372,red:370,371,red:373,369,red:367,371,red:9,361,red:13,300,red:10,344,red:333,378,red:15,286,red:8,388,red:7,374,red:13,315,red:12,331,red:332,34,red:45,31,red:9,34,red:322,42,red:218,31,red:310,49,red:357,20,red:198,33,red:342,27,red:159,25,red&prices=334,334&supplies=80,10&max_ux=400&max_uy=400'>Large Px Large Py</a> ;
+	<a class='example' href='?points=69,377,red:56,362,red:66,387,red:64,363,red:51,377,red:57,388,red:64,363,red:66,355,red:56,388,red:68,377,red:78,374,red:68,372,red:53,378,red:69,382,red:62,362,red:55,382,red:68,379,red:69,378,red:58,377,red:53,378,red:58,378,red:76,374,red:67,382,red:60,370,red:65,372,red:58,379,red:53,352,red:60,378,red:77,390,red:65,361,red:66,373,red:53,351,red:56,353,red:63,361,red:61,374,red:66,377,red:58,375,red:52,352,red:68,385,red:52,355,red:74,373,red:8,189,red:52,356,red:72,374,red:47,393,red:79,374,red:73,375,red:84,378,red:58,385,red:63,384,red:58,371,red:58,377,red:68,377,red:7,225,red:70,376,red:4,394,red:73,373,red:215,376,red:65,381,red:184,4,red:56,391,red:79,376,red:8,214,red:24,391,red:73,390,red:8,177,red:75,384,red:71,380,red:75,378,red:13,393,red:80,381,red:13,9,red:89,368,red:71,374,red:79,384,red:85,389,red:69,391,red:36,393,red:73,382,red:65,396,red:254,375,red:257,384,red:252,368,red:248,382,red:249,366,red:261,372,red:234,384,red:222,376,red:271,365,red:246,378,red:222,3,red:5,11,red:6,2,red:8,201,red:196,4,red:5,37,red:13,20,red:5,21,red:209,3,red:170,4,red&prices=48,224&supplies=80,10&max_ux=400&max_uy=400'>Small Px Large Py</a> ;
+	<a class='example' href='?points=361,371,red:362,369,red:366,366,red:366,374,red:379,379,red:366,373,red:362,364,red:372,364,red:376,366,red:376,372,red:371,362,red:362,376,red:361,372,red:367,366,red:378,362,red:366,366,red:370,363,red:362,378,red:367,379,red:369,368,red:371,365,red:367,361,red:364,375,red:368,367,red:371,364,red:371,367,red:372,362,red:371,364,red:366,366,red:375,361,red:371,386,red:367,370,red:371,370,red:361,379,red:357,368,red:351,354,red:376,369,red:367,379,red:373,344,red:379,376,red:371,350,red:362,370,red:380,374,red:363,377,red:369,373,red:379,361,red:347,384,red:363,389,red:350,349,red:371,373,red:390,363,red:376,374,red:361,379,red:369,379,red:377,375,red:375,375,red:349,382,red:389,393,red:361,383,red:379,350,red:358,358,red:375,372,red:383,389,red:340,362,red:391,369,red:372,350,red:349,357,red:391,350,red:373,393,red:342,377,red:396,380,red:353,354,red:394,371,red:379,389,red:357,386,red:364,343,red:357,381,red:348,371,red:355,394,red:350,373,red:23,36,red:26,37,red:29,34,red:33,32,red:35,25,red:24,34,red:31,35,red:35,37,red:24,30,red:38,27,red:30,364,red:46,363,red:17,360,red:31,371,red:18,364,red:339,353,red:16,363,red:29,381,red:28,375,red:31,359,red&prices=340,48&supplies=80,10&max_ux=400&max_uy=400'>Large Px Small Py</a> 
+</li>
+</ul>
+
+<h2>Advanced</h2>
+<form method='get' action=''>
+<table>
+<tr><th>Points:</th><td><textarea rows='10' cols='10' name='points' id='points'></textarea></td></tr>
+<tr><th>Prices:</th><td><input name='prices' id='prices' /></td></tr>
+<tr><th>Supplies:</th><td><input name='supplies' id='supplies' /> </td></tr>
+<tr><th>Supply values:</th><td><input name='supplyvals' id='supplyvals' /> </td></tr>
+<tr><th>max u<sub>x</sub>=<span id='max_ux'></span>&nbsp;&nbsp;&nbsp; max u<sub>y</sub>=</th> <td><input name='max_uy' id='max_uy' /></td></tr>
+<tr><th colspan='2'><input type='submit' /></th></tr>
+</table>
+</form>
+
+</td>
+</tr>
+
+</table>
+
+<script type='text/javascript'>$(document).ready(function() {
+
+var maxDrawX = canvas.width, maxDrawY = canvas.height;
+function realY(theDrawY) {return (maxDrawY-theDrawY)*yScale}
+function drawY(theRealY) {return maxDrawY-theRealY/yScale}
+
+var priceX, priceY;
+var demandForX, demandForY;  // at given prices
+var supplyOfX, supplyOfY;  // at given prices
+var maxSupplyOfX, maxSupplyOfY;
+var supplyValueX, supplyValueY;
+var gainFromXTrade, gainFromYTrade, gainFromTrade;
+var maxUx, maxUy, yScale;  // yScale := maxUy / maxY
+
+var isSellerMarket = false;  // default (false): the dots are buyers.  true: the dots are sellers (this is buggy and not used).
+var demandsAtGivenPrices, suppliesAtGivenPrices; // functions determined by isSellerMarket;
+
+
+/**
+ * Create the functions  demandsAtGivenPrices(prices) and suppliesAtGivenPrices(price),
+ *        based on the valuations of the agents.
+ * @param samplingProbability - if given, it is used to sample the agents (typical value: 0.5). If not given, it is set to 1.
+ */
+function updateDemandAndSupplyFunctions(samplingProbability) {
+    if (!samplingProbability || samplingProbability>=1) {
+        samplingProbability = 1.0;
+        theMaxSupplyOfX = maxSupplyOfX;
+        theMaxSupplyOfY = maxSupplyOfY;
+    } else {  // calculate a sample of the sellers
+        theMaxSupplyOfX = sampleSupply(maxSupplyOfX,samplingProbability);
+        theMaxSupplyOfY = sampleSupply(maxSupplyOfY,samplingProbability);
+    }
+
+	// calculate agents utilities vector:
+	var agents = [];
+	for (var i=0; i<window.points.length; ++i) {
+        if (Math.random()>samplingProbability)            continue;
+		var point = window.points[i];
+		var utilityX = point.x, utilityY=realY(point.y);
+		agents.push({x:utilityX, y:utilityY});
+	}
+
+	// create demand and supply functions:
+	if (!isSellerMarket) {  // The default option: agents are buyers, maxSupply is number of sellers.
+		demandsAtGivenPrices = demandsOfGivenBuyers.bind(0,agents);
+		suppliesAtGivenPrices = suppliesOfThresholdSellers.bind(0,theMaxSupplyOfX,theMaxSupplyOfY,supplyValueX,supplyValueY);  // Defined in Economics.js
+	} else {  // The alternative option: agents are sellers, maxSupply is actually number of buyers. This option is buggy and not used.
+		suppliesAtGivenPrices = suppliesOfGivenSellers.bind(0,agents);
+		demandsAtGivenPrices = demandsOfThresholdBuyers.bind(0,theMaxSupplyOfX,theMaxSupplyOfY,supplyValueX,supplyValueY); 
+	}
+}
+
+var sampleSupply = function(maxSupply, samplingProbability) {
+    return samplingProbability*(maxSupply);
+    if (Math.random()>samplingProbability) {
+        return samplingProbability*(maxSupply - Math.sqrt(maxSupply));
+    } else {
+        return samplingProbability*(maxSupply + Math.sqrt(maxSupply));
+    }
+}
+
+var AGENT_COLOR = 'red';
+var BUYX_COLOR = '#0f0';
+var BUYY_COLOR = '#00f';
+
+function updatePermaLink() {
+	var pointsString = window.points.toString();
+	document.getElementById('points').value = pointsString.replace(/:/g,":\n");
+	document.getElementById('prices').value  = priceX+","+priceY;
+	document.getElementById('supplies').value  = maxSupplyOfX+","+maxSupplyOfY;
+	document.getElementById('supplyvals').value  = supplyValueX+","+supplyValueY;
+	document.getElementById('max_ux').innerHTML  = maxUx;
+	document.getElementById('max_uy').value  = maxUy;
+	window.updatePermaLink("points="+encodeURI(pointsString)+"&prices="+priceX+","+priceY+"&supplies="+maxSupplyOfX+","+maxSupplyOfY+"&supplyvals="+supplyValueX+","+supplyValueY+"&max_ux="+maxUx+"&max_uy="+maxUy);
+}
+
+function updateStatus() {
+	setStatus("<table>"+
+		"<tr>                                                           <th>good</th> <th>price</th>   <th>demand</th>          <th>supply</th> <th>status</th>   <th>gain</th>                            <th>mean</th> </tr>"+
+		"<tr style='background-color:"+BUYX_COLOR.replace(/0/g,"8")+"'> <th>X</th> <th>"+priceX+"</th> <th>"+demandForX+"</th> <th>"+supplyOfX+"</th> <th>"+excessString(demandForX,supplyOfX)+"</th> <th>"+gainFromXTrade+"</th> <th>"+gainFromXTrade+"</th> </tr>"+
+		"<tr style='background-color:"+BUYY_COLOR.replace(/0/g,"8")+"'> <th>Y</th> <th>"+priceY+"</th> <th>"+demandForY+"</th> <th>"+supplyOfY+"</th> <th>"+excessString(demandForY,supplyOfY)+"</th> <th>"+gainFromYTrade+"</th> <th>"+gainFromYTrade+"</th> </tr>"+
+		"<tr style='background-color:white'> <th>Total</th> <th></th> <th>"+(demandForX+demandForY)+"</th> <th>"+(maxSupplyOfX+maxSupplyOfY)+"</th> <th></th> <th>"+gainFromTrade+"</th> </tr>"+
+		"</table>");
+}
+
+var priceLines = [];
+function updatePriceLines() {
+	var priceLineX, priceLineY;
+	
+	// draw diagonal line:
+	if (maxUx-priceX < maxUy-priceY) {
+		priceLineX = maxUx;
+		priceLineY = priceY + (maxUx-priceX);
+	} else {
+		priceLineY = maxUy;
+		priceLineX = priceX + (maxUy-priceY);
+	}
+	
+	for (var i in priceLines) 
+		priceLines[i].remove();
+	priceLines=[];
+	
+	priceLines.push(svgpaper.
+			rect(canvas.width,supplyValueY).
+			move(0,canvas.height-supplyValueY).
+			fill('#888').attr({'fill-opacity':0.4}).back());
+	priceLines.push(svgpaper.
+			rect(supplyValueX,canvas.height).
+			fill('#888').
+			attr({'fill-opacity':0.4}).back());
+	priceLines.push(svgpaper.polygon([
+			[priceX,drawY(priceY)],
+			[priceLineX,drawY(priceLineY)],
+			[maxUx,drawY(maxUy)],
+			[canvas.width,drawY(0)],
+			[priceX,drawY(0)]
+			]).fill(BUYX_COLOR).attr({'fill-opacity':0.5}).back());
+	priceLines.push(svgpaper.polygon([
+			[priceX,drawY(priceY)],
+			[priceLineX,drawY(priceLineY)],
+			[maxUx,drawY(maxUy)],
+			[0,drawY(maxUy)],
+			[0,drawY(priceY)]
+			]).fill(BUYY_COLOR).attr({'fill-opacity':0.5}).back());
+	
+}
+
+
+function updateDemands() {  
+    // This function must be called after updateDemandAndSupplyFunctions, 
+    // which creates the functions demandsAtGivenPrices and suppliesAtGivenPrices.
+	var demands = demandsAtGivenPrices(priceX,priceY);
+	demandForX = demands[0];
+	demandForY = demands[1];
+	var supplies = suppliesAtGivenPrices(priceX,priceY);
+	supplyOfX = supplies[0];
+	supplyOfY = supplies[1];
+	
+	if (!demandForX||!supplyOfX) {
+		gainFromXTrade = 0;
+	} else if (demandForX>supplyOfX) {  // excess demand
+		gainFromXTrade = (demands[2]*supplyOfX/demandForX) + supplies[2];
+	} else {  // excess supply
+		gainFromXTrade = demands[2] + (supplies[2]*demandForX/supplyOfX);
+	}
+	gainFromXTrade = Math.round(gainFromXTrade);
+
+	if (!demandForY||!supplyOfY) {
+		gainFromYTrade = 0;
+	} else if (demandForY>supplyOfY) {  // excess demand
+		gainFromYTrade = (demands[3]*supplyOfY/demandForY) + supplies[3];
+	} else {  // excess supply
+		gainFromYTrade = demands[3] + (supplies[3]*demandForY/supplyOfY);
+	}
+	gainFromYTrade = Math.round(gainFromYTrade);
+	
+	gainFromTrade = gainFromXTrade +  gainFromYTrade;
+}
+
+
+function addPoints(count, x, y, color) {
+	for (var i=0; i<count; ++i) {
+		point = {x:x, y:y};
+		if (!x) 
+			point.x = Math.round(Math.random()*maxDrawX);
+		else
+			point.x += Math.round(Math.random()*20-10);
+
+		if (!y) 
+			point.y = Math.round(Math.random()*maxDrawY);
+		else
+			point.y += Math.round(Math.random()*20-10);
+		window.points.add(point, color);
+	}
+}
+
+function setMaxSupplies(maxSupplyString) {
+    // determines the maximum supply - regardless of the prices.
+	if (!maxSupplyString)
+		maxSupplyString = "80,10";
+	var maxSupplyVector = maxSupplyString.split(",");
+	maxSupplyOfX = parseInt(maxSupplyVector[0]);
+	maxSupplyOfY = parseInt(maxSupplyVector[1]);
+    //alert(maxSupplyOfX)
+}
+
+function setSupplyValues(supplyString) {
+    // determines the utility of the sellers per item.
+	if (!supplyString)
+		supplyString = "0,0";
+	var supplyVector = supplyString.split(",");
+	supplyValueX = parseInt(supplyVector[0]);
+	supplyValueY = parseInt(supplyVector[1]);
+}
+
+$(".addAgents").click(function addAgent() {
+	switch($(this).text()) {
+		case 'right': addPoints(10,  370, null, AGENT_COLOR); break;
+		case 'left': addPoints(10,   30, null, AGENT_COLOR); break;
+		case 'top': addPoints(10,    null, 30, AGENT_COLOR); break;
+		case 'bottom': addPoints(10, null, 370, AGENT_COLOR); break;
+		case 'TR': addPoints(10, 370,30, AGENT_COLOR); break;
+		case 'TL': addPoints(10, 30,30, AGENT_COLOR); break;
+		case 'BR': addPoints(10, 370,370, AGENT_COLOR); break;
+		case 'BL': addPoints(10, 30,370, AGENT_COLOR); break;
+	}
+	updateDemandAndSupplyFunctions();
+	updateDemands();
+	updateStatus();
+});
+
+$(".randomize").click(function() {
+	window.points.randomize(maxDrawX,maxDrawY);
+});
+
+$(".clear").click(function() {
+	window.points.clear();
+});
+
+function gotoMinWalrasianPrice() {
+    // This function must be called after updateDemandAndSupplyFunctions, 
+    // which creates the functions demandsAtGivenPrices and suppliesAtGivenPrices.
+	var prices = calcMinWalrasianPrice(demandsAtGivenPrices,suppliesAtGivenPrices);
+	priceX = prices[0];
+	priceY = prices[1];
+	priceCircle.attr('cx',priceX).attr('cy',drawY(priceY));	
+	updatePriceLines();
+}
+
+$(".calcMinWalrasianPrice").click(function() {
+	updateDemandAndSupplyFunctions();
+	gotoMinWalrasianPrice();
+	updateDemands();
+	updatePermaLink();
+	updateStatus();
+});
+
+$(".calcMinWalrasianPriceHalfMarket").click(function() {
+	updateDemandAndSupplyFunctions(0.5);
+	gotoMinWalrasianPrice();
+	updateDemandAndSupplyFunctions();
+	updateDemands();
+	updatePermaLink();
+	updateStatus();
+});
+
+$(".changeSupply").click(function() {
+	switch($(this).text()) {
+		case 'x+1': maxSupplyOfX+=1; break;
+		case 'x-1': maxSupplyOfX=Math.max(maxSupplyOfX-1,0); break;
+		case 'y+1': maxSupplyOfY+=1; break;
+		case 'y-1': maxSupplyOfY=Math.max(maxSupplyOfY-1,0); break;
+	};
+	updateDemandAndSupplyFunctions();
+	//gotoMinWalrasianPrice();
+	updateDemands();
+	updatePermaLink();
+	updateStatus();
+});
+
+$(".changeSupplyValue").click(function() {
+	switch($(this).text()) {
+		case 'x+1': supplyValueX+=1; break;
+		case 'x-1': supplyValueX=Math.max(supplyValueX-1,0); break;
+		case 'y+1': supplyValueY+=1; break;
+		case 'y-1': supplyValueY=Math.max(supplyValueY-1,0); break;
+	};
+	updateDemandAndSupplyFunctions();
+	//gotoMinWalrasianPrice();
+	updateDemands();
+	updatePermaLink();
+	updateStatus();
+});
+
+window.points = DraggablePoints(window.svgpaper, /* change event = */function() {
+	updatePermaLink();
+	updateDemandAndSupplyFunctions();	
+	updateDemands();
+	updateStatus();
+});
+
+
+var maxUx = canvas.width;
+var maxUy = Arg("max_uy");
+if (!maxUy)
+	maxUy = canvas.height;
+maxUy = parseInt(maxUy);
+yScale = maxUy/maxDrawY;
+
+var pointsString = Arg("points");
+if (pointsString)
+	window.points.fromString(pointsString);
+else { // add 100 random points
+	for (var i=0; i<100; ++i) {
+		var utilityX = Math.floor(Math.random()*canvas.width);
+		var utilityY = Math.floor(Math.random()*canvas.height);
+		window.points.add({x:utilityX,y:utilityY}, AGENT_COLOR);
+	}
+}
+
+var prices = Arg("prices");
+if (!prices)
+	prices = "200,100";
+var priceVector = prices.split(",");
+priceX = parseInt(priceVector[0]);
+priceY = parseInt(priceVector[1]);
+var priceCircle = svgpaper.circle(10).attr('cx',priceX).attr('cy',drawY(priceY)).attr(
+		{stroke: 'black', "stroke-width": '5px', fill: 'white'});
+priceCircle.draggable();
+priceCircle.dragend = function(delta, event) {
+	priceX = this.attr('cx');
+	priceY = realY(this.attr('cy'));
+	if (priceX<0) 
+		this.attr('cx',(priceX=0));
+	if (priceY<0) 
+		this.attr('cy',(priceY=0));
+
+	updatePriceLines();
+	updateDemandAndSupplyFunctions();	
+	updateDemands();
+	updatePermaLink();
+	updateStatus();
+};
+
+
+setMaxSupplies(Arg("supplies"));
+setSupplyValues(Arg("supplyvals"));
+
+window.points.refresh();
+updatePriceLines();
+updatePermaLink();
+
+});</script>
+
+
+</body>
+</html>
