@@ -57,7 +57,7 @@ Agents in the green area want to buy X; in the blue area - to buy Y; and in the 
 <li>Change the prices by moving the black ring around. Watch the changes in demand. Can you find equilibrium prices?</li>
 <li>Find minimum equilibrium prices in: <button class='calcMinWalrasianPrice'>whole market</button> <button class='calcMinWalrasianPriceHalfMarket'>half market</button>
 <li>Change the supplies of X and/or Y: <button class='changeSupply'>x-1</button> <button class='changeSupply'>x+1</button> <button class='changeSupply'>y-1</button> <button class='changeSupply'>y+1</button>
-<li>Change the values of the suppliers of X/Y: <button class='changeSupplyValue'>x-1</button> <button class='changeSupplyValue'>x+1</button> <button class='changeSupplyValue'>y-1</button> <button class='changeSupplyValue'>y+1</button>
+<li>Change the costs of X/Y: <button class='changeSupplyValue'>x-1</button> <button class='changeSupplyValue'>x+1</button> <button class='changeSupplyValue'>y-1</button> <button class='changeSupplyValue'>y+1</button>
 
 <li>Add agents: <button class='addAgents'>right</button><button class='addAgents'>left</button><button class='addAgents'>top</button><button class='addAgents'>bottom</button>
                 <button class='addAgents'>BR</button><button class='addAgents'>BL</button><button class='addAgents'>TR</button><button class='addAgents'>TL</button>
@@ -71,7 +71,11 @@ Agents in the green area want to buy X; in the blue area - to buy Y; and in the 
 
 <h2>Test cases</h2>
  <ul>
-<li>Support: 
+	<li>One item:
+		<a class='example' href='?points=20,281,red:20,160,red:20,3,red:20,67,red:20,256,red:20,119,red:20,350,red:20,280,red:20,398,red:20,378,red:20,191,red:20,2,red:20,365,red:20,239,red:20,277,red:20,317,red:20,398,red:20,87,red&amp;prices=21,121&amp;supplies=0,10&amp;supplyvals=0,0&amp;max_ux=400&amp;max_uy=400'>Simple</a> ;
+		Amos' example: <a class='example' href='?points=20,50:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:20,350:18,350:22,350:19,350:21,350&amp;prices=21,121&amp;supplies=0,10&amp;supplyvals=0,0&amp;max_ux=400&amp;max_uy=400'>with ties</a> ;
+		<a class='example' href='?points=20,50:20,300:20,301:20,302:20,303:20,304:20,305:20,306:20,307:20,308:20,309:20,310:20,311:20,312:20,313:20,314:20,315:20,316:20,317:20,318:20,319:20,320:20,321:20,322:20,323:20,324:20,325:20,326:20,327:20,328:20,329:20,330:20,331:20,332:20,333:20,334:20,335:20,336:20,337:20,338:20,339:20,340:20,341:20,342:20,343:20,344:20,345:20,346:20,347:20,348:20,349:20,350:20,351:20,352:20,353:20,354:20,355:20,356:20,357:20,358:20,359:20,360:20,361:20,362:20,363:20,364:20,365:20,366:20,367:20,368:20,369:20,370:20,371:20,372:20,373:20,374:20,375:20,376:20,377:20,378:20,379:20,380:20,381:20,382:20,383:20,384:20,385:20,386:20,387:20,388:20,389:20,390:20,391:20,392:20,393:18,394:22,395:19,396:21,397&amp;prices=21,121&amp;supplies=0,10&amp;supplyvals=0,0&amp;max_ux=400&amp;max_uy=400'>without ties</a> ;
+  <li>Support: 
 	<a class='example' href='?points=368,89,red:365,327,red:369,335,red:369,226,red:370,141,red:371,115,red:373,69,red:372,166,red:370,398,red:368,337,red:369,366,red:369,152,red:365,214,red:366,207,red:369,136,red:381,103,red:366,289,red:369,223,red:369,66,red:374,279,red:366,103,red:390,140,red:368,162,red:366,359,red:372,137,red:368,302,red:369,326,red:375,118,red:375,94,red:373,226,red:370,393,red:368,144,red:374,259,red:374,388,red:374,105,red:374,249,red:370,128,red:370,317,red:373,93,red:373,337,red:371,312,red:373,148,red:366,201,red:384,79,red:368,310,red:366,131,red:371,228,red:370,54,red:372,234,red:385,106,red:366,204,red:373,143,red:369,332,red:370,176,red:368,192,red:374,245,red:368,124,red:374,125,red:389,66,red:373,398,red:371,273,red:370,361,red:373,226,red:368,279,red:372,58,red:365,59,red:368,303,red:368,356,red:368,191,red:368,204,red:375,262,red:367,49,red:367,45,red:371,364,red:367,389,red:384,48,red:387,58,red:370,300,red:371,374,red:368,192,red:273,33,red:150,16,red:258,22,red:338,90,red:30,33,red:281,17,red:332,105,red:106,30,red:78,30,red:140,32,red:14,25,red:224,29,red:267,12,red:58,27,red:42,35,red:199,19,red:87,20,red:170,25,red:328,121,red:122,28,red&prices=339,743&supplies=80,10&max_ux=400&max_uy=800'>H-V support</a> ;
 	<a class='example' href='?points=368,89,red:365,327,red:369,335,red:369,226,red:370,141,red:371,115,red:373,69,red:372,166,red:370,398,red:368,337,red:369,366,red:369,152,red:365,214,red:366,207,red:369,136,red:381,103,red:366,289,red:369,223,red:369,66,red:374,279,red:366,103,red:390,140,red:368,162,red:366,359,red:372,137,red:368,302,red:369,326,red:375,118,red:375,94,red:373,226,red:370,393,red:368,144,red:374,259,red:374,388,red:374,105,red:374,249,red:370,128,red:370,317,red:373,93,red:373,337,red:371,312,red:373,148,red:366,201,red:384,79,red:368,310,red:366,131,red:371,228,red:370,54,red:372,234,red:385,106,red:366,204,red:373,143,red:369,332,red:370,176,red:368,192,red:374,245,red:368,124,red:374,125,red:389,66,red:373,398,red:371,273,red:370,361,red:373,226,red:368,279,red:372,58,red:365,59,red:368,303,red:368,356,red:368,191,red:368,204,red:375,262,red:367,49,red:354,20,red:371,364,red:367,389,red:384,48,red:387,58,red:370,300,red:371,374,red:368,192,red:273,33,red:150,16,red:258,22,red:356,175,red:30,33,red:281,17,red:38,60,red:115,42,red:84,40,red:140,32,red:14,35,red:226,39,red:251,44,red:62,38,red:42,35,red:199,19,red:87,20,red:170,25,red:18,59,red:129,41,red&prices=326,731&supplies=80,10&max_ux=400&max_uy=800'>H-D support</a> 
 </li>
@@ -88,7 +92,7 @@ Agents in the green area want to buy X; in the blue area - to buy Y; and in the 
 <tr><th>Points:</th><td><textarea rows='10' cols='10' name='points' id='points'></textarea></td></tr>
 <tr><th>Prices:</th><td><input name='prices' id='prices' /></td></tr>
 <tr><th>Supplies:</th><td><input name='supplies' id='supplies' /> </td></tr>
-<tr><th>Supply values:</th><td><input name='supplyvals' id='supplyvals' /> </td></tr>
+<tr><th>Costs:</th><td><input name='supplyvals' id='supplyvals' /> </td></tr>
 <tr><th>max u<sub>x</sub>=<span id='max_ux'></span>&nbsp;&nbsp;&nbsp; max u<sub>y</sub>=</th> <td><input name='max_uy' id='max_uy' /></td></tr>
 <tr><th colspan='2'><input type='submit' /></th></tr>
 </table>
@@ -177,10 +181,10 @@ function updatePermaLink() {
 
 function updateStatus() {
 	setStatus("<table>"+
-		"<tr>                                                           <th>good</th> <th>price</th>   <th>demand</th>          <th>supply</th> <th>status</th>   <th>gain</th>                            <th>mean</th> </tr>"+
-		"<tr style='background-color:"+BUYX_COLOR.replace(/0/g,"8")+"'> <th>X</th> <th>"+priceX+"</th> <th>"+demandForX+"</th> <th>"+supplyOfX+"</th> <th>"+excessString(demandForX,supplyOfX)+"</th> <th>"+gainFromXTrade+"</th> <th>"+gainFromXTrade+"</th> </tr>"+
-		"<tr style='background-color:"+BUYY_COLOR.replace(/0/g,"8")+"'> <th>Y</th> <th>"+priceY+"</th> <th>"+demandForY+"</th> <th>"+supplyOfY+"</th> <th>"+excessString(demandForY,supplyOfY)+"</th> <th>"+gainFromYTrade+"</th> <th>"+gainFromYTrade+"</th> </tr>"+
-		"<tr style='background-color:white'> <th>Total</th> <th></th> <th>"+(demandForX+demandForY)+"</th> <th>"+(maxSupplyOfX+maxSupplyOfY)+"</th> <th></th> <th>"+gainFromTrade+"</th> </tr>"+
+		"<tr>                                                           <th>good</th> <th>price</th>   <th>demand</th>          <th>supply</th> <th>cost</th> <th>status</th>   <th>gain</th>                            <th>mean</th> </tr>"+
+		"<tr style='background-color:"+BUYX_COLOR.replace(/0/g,"8")+"'> <th>X</th> <th>"+priceX+"</th> <th>"+demandForX+"</th> <th>"+supplyOfX+"</th> <th>"+supplyValueX+"</th> <th>"+excessString(demandForX,supplyOfX)+"</th> <th>"+gainFromXTrade+"</th> <th>"+gainFromXTrade+"</th> </tr>"+
+		"<tr style='background-color:"+BUYY_COLOR.replace(/0/g,"8")+"'> <th>Y</th> <th>"+priceY+"</th> <th>"+demandForY+"</th> <th>"+supplyOfY+"</th> <th>"+supplyValueY+"</th>  <th>"+excessString(demandForY,supplyOfY)+"</th> <th>"+gainFromYTrade+"</th> <th>"+gainFromYTrade+"</th> </tr>"+
+		"<tr style='background-color:white'> <th>Total</th> <th></th> <th>"+(demandForX+demandForY)+"</th> <th>"+(maxSupplyOfX+maxSupplyOfY)+"</th> <th></th>  <th></th> <th>"+gainFromTrade+"</th> </tr>"+
 		"</table>");
 }
 

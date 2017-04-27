@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta charset='utf8' />
+<script src="jsmodules/jquery-1.11.0.min.js"></script>
+<script src="jsmodules/arg.js.v1.1.min.js"></script>
+<script src="arg.js"></script>
+
+<script src="MIDA-1-item-type.js"></script>
+
+<link rel='stylesheet' href='style.css' />
+<title>MIDA with single-item-type single-unit</title>
+
+<style>
+a { cursor: pointer; color: blue; text-decoration: underline; }
+a:hover,a.hover {  }
+#status {text-align:left; font-size:15px;}
+</style>
+
+</head>
+<body>
+<h1>Demo of MIDA in a single-item-type single-unit market</h1>
+
+<form method='get' action=''>
+<h2>Input</h2>
+<table>
+<tr><th>Buyers:</th><td><textarea rows='1' cols='80' name='buyers' id='buyers'>10 of 400, 10 of 300</textarea></td></tr>
+<tr><th>Sellers:</th><td><textarea rows='1' cols='80' name='sellers' id='sellers'>8 of 100, 8 of 200</textarea></td></tr>
+<tr><th>Noise:</th><td><input size='10' name='noise' id='noise' value='0.000002'></input> (The value of agent j is v+j*noise. This makes the valuations more generic).</td></tr>
+<tr><th>Iterations:</th><td><input size='10' name='iterations' id='iterations' value='1'></input></td></tr>
+<tr><th colspan='2'><input type='submit' /></th></tr>
+</table>
+</form>
+
+<h2>Output</h2>
+<p>
+In <b id='iterations1'></b> iterations, the median competitive ratio (MIDA-gain / optimal-gain) is: <b id='ratio'></b>.
+</p>
+The computation details are given below.
+<table border="1" padding="1">
+<tr><th>Left market:</th><td><pre id='left'></pre></td></tr>
+<tr><th>Right market:</th><td><pre  id='right'></pre></td></tr>
+<tr><th>MIDA Gain:</th><td><pre id='gain'></pre></td></tr>
+<tr><th>Optimal market:</th><td><pre id='optimal'></pre></td></tr>
+</table>
+
+<h2>Test cases</h2>
+<ul>
+ <li>Amos' example:
+   <a class='example' href='?buyers=100+with+value+1000000&amp;sellers=9+with+value+999999%2C+1+with+value+0&amp;noise=0.000002&amp;iterations=10'>
+     10 efficicent deals
+   </a>
+   ;
+   <a class='example' href='?buyers=10000+with+value+1000000&amp;sellers=999+with+value+999999%2C+1+with+value+0&amp;noise=0.000002&amp;iterations=10'>
+     1000 efficient deals
+   </a>
+   ;
+ </ul>
+
+
+<script type='text/javascript'>$(document).ready(function() {
+  
+// INPUT:
+var noise = parseFloat(ArgFromField("noise"))
+var iterations = parseInt(ArgFromField("iterations"))
+var buyersString = ArgFromField("buyers")
+var buyers = valuesFromString(buyersString, /*bias=*/0, noise)
+var sellersString = ArgFromField("sellers")
+var sellers = valuesFromString(sellersString, /*bias=*/noise/2, noise)
+
+// OUTPUT:
+var output = MIDA_median(buyers,sellers,iterations)
+$("#iterations1").text(iterations)
+$("#left").text(JSON.stringify(output.leftMarket, null, 2))
+$("#right").text(JSON.stringify(output.rightMarket, null, 2))
+$("#optimal").text(JSON.stringify(output.optimalMarket, null, 2))
+$("#gain").text(JSON.stringify(output.gain, null, 2))
+$("#ratio").text(JSON.stringify(output.competitiveRatio, null, 2))
+});</script>
+
+
+</body>
+</html>
