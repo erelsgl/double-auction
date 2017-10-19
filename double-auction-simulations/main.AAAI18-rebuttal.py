@@ -157,6 +157,8 @@ def plotResults(resultsFilename=None, xColumn='Min total traders', numOfBins=10,
 		results_bins = results.groupby(pd.cut(results[xColumn],numOfBins)).mean()
 	else:
 		results_bins = results.groupby(results[xColumn]).mean()
+		
+	results_bins.to_csv(resultsFilename+".bins")
 	
 	results_bins.plot(x=xColumn, y='MIDA-Vickrey total ratio', style=['b^-'], ax=ax, markersize=markerSize)
 	results_bins.plot(x=xColumn, y='MIDA-Vickrey traders ratio', style=['gv-'], ax=ax, markersize=markerSize)
@@ -216,9 +218,9 @@ def torqSimulation():
 	# plt.show()
 
 def randomSimulation(numOfAuctions = 100):
-	numOfTraderss = range(2000000, 42000000, 2000000)
-	minNumOfUnitsPerTrader = 10
-	maxNumOfUnitsPerTraders = [100,1000,10000,1000000,10000000,100000000,100000]
+	numOfTraderss = range(2000000, 42000000, 2000000) #range(200,4200,200) # 
+	minNumOfUnitsPerTrader = 1 # 10
+	maxNumOfUnitsPerTraders = [100,1000,10000,100000,1000000,10000000,100000000,10]
 	meanValue = 500
 	maxNoiseSizes = [50,100,150,200,300,350,400,450,500,250]
 	numOfBins = 20
@@ -246,9 +248,10 @@ def randomSimulation(numOfAuctions = 100):
 		# simulateAuctions(randomAuctions(   ### as function of m - fixed total traders - TOO LONG
 		# 	numOfAuctions, [100], minNumOfUnitsPerTrader, maxNumOfUnitsPerTraders, meanValue, maxNoiseSizes[-1:], fixedNumOfVirtualTraders=False),
 		# 	filenameUnitsFixedTraders, keyColumns=keyColumns)
-		simulateAuctions(randomAuctions(     ### as function of noise
-			numOfAuctions, numOfTraderss[-1:], minNumOfUnitsPerTrader, maxNumOfUnitsPerTraders[-1:], meanValue, maxNoiseSizes, fixedNumOfVirtualTraders=True),
-			filenameNoise, keyColumns=keyColumns)
+		
+		# simulateAuctions(randomAuctions(     ### as function of noise
+		# 	numOfAuctions, numOfTraderss[-1:], minNumOfUnitsPerTrader, maxNumOfUnitsPerTraders[-1:], meanValue, maxNoiseSizes, fixedNumOfVirtualTraders=True),
+		# 	filenameNoise, keyColumns=keyColumns)
 
 		### additive
 		# simulateAuctions(randomAuctions(  ### as function of #traders
@@ -270,7 +273,7 @@ def randomSimulation(numOfAuctions = 100):
 	plotResults(filenameTraders,"Total traders",numOfBins, ax, title=
 		TITLESTART+"m={},M={},noise={}".format(minNumOfUnitsPerTrader,maxNumOfUnitsPerTraders[-1],maxNoiseSizes[-1]))
 	ax.set_xlabel('Total #traders', fontsize=axesFontSize)
-	ax.set_xlim([0,1000])
+	#ax.set_xlim([0,1000])
 
 
 	# ax=plt.subplot(1,1,1)
