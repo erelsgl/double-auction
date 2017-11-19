@@ -1,2 +1,2 @@
 # economics
-code and simulations related to economics and computation
+Demos and simulations related to economics and computation.
