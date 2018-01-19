@@ -311,7 +311,7 @@ randomTradeWithExogeneousPrice.LOG = False
 
 
 
-################# UTILITIES FOR VICKREY-MIDA
+################# UTILITIES FOR VICKREY-MUDA
 
 def unitsByIndex(traders:list)->dict:
 	units = defaultdict(int)
@@ -426,7 +426,7 @@ VickreyTradeWithExogeneousPrice.LOG = False
 
 #### Implementation of mechanisms
 
-def MIDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
+def MUDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 	"""
 	Run the Multi-Item-Double-Auction mechanism.
 	INPUT: a list of Trader objects, each of which represents valuations with decreasing marginal returns.
@@ -438,9 +438,9 @@ def MIDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 	>>> b2 = Trader.Buyer([[4,150],[3,350]])
 	>>> s1 = Trader.Seller([[5,200]])
 	>>> s2 = Trader.Seller([[4,100],[3,300]])
-	>>> MIDA.LOG = randomTradeWithExogeneousPrice.LOG = False
+	>>> MUDA.LOG = randomTradeWithExogeneousPrice.LOG = False
 	>>> random.seed(7)
-	>>> MIDA([b1,b2,s1,s2], Lottery=True, Vickrey=True)
+	>>> MUDA([b1,b2,s1,s2], Lottery=True, Vickrey=True)
 	(4, 900, 900, 4, 750, 900)
 	"""
 	(tradersLeft,tradersRight) = randomPartition(traders)
@@ -448,10 +448,10 @@ def MIDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 	priceRight = walrasianEquilibrium(tradersRight)[0]
 	result = ()
 	if Lottery:
-		if MIDA.LOG: 
+		if MUDA.LOG: 
 			print ("Left sub-market: pR=", priceRight, "traders=",tradersLeft)
 		(sizeLeft, gainLeft) = randomTradeWithExogeneousPrice(tradersLeft, priceRight)
-		if MIDA.LOG: 
+		if MUDA.LOG: 
 			print ("Right sub-market: pL=", priceLeft, "traders=",tradersRight)
 		(sizeRight, gainRight) = randomTradeWithExogeneousPrice(tradersRight, priceLeft)
 		result += (sizeRight+sizeLeft, gainRight+gainLeft, gainRight+gainLeft)
@@ -459,10 +459,10 @@ def MIDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 		(sizeLeft, tradersGainLeft, managerGainLeft, totalGainLeft) = VickreyTradeWithExogeneousPrice(tradersLeft, priceRight)
 		(sizeRight, tradersGainRight, managerGainRight, totalGainRight) = VickreyTradeWithExogeneousPrice(tradersRight, priceLeft)
 		result += (sizeRight+sizeLeft, tradersGainRight+tradersGainLeft, totalGainRight+totalGainLeft)
-	if MIDA.LOG: 
+	if MUDA.LOG: 
 		print(result)
 	return result
-MIDA.LOG = False
+MUDA.LOG = False
 
 def WALRAS(traders:list) -> (int, int, int, float):
 	"""
@@ -498,8 +498,8 @@ if __name__ == "__main__":
 
 		#walrasianEquilibrium.LOG=False
 		#randomTradeWithExogeneousPrice.LOG = False
-		#MIDA.LOG = True
-		#print(MIDA([b1,b2,s1,s2]))
+		#MUDA.LOG = True
+		#print(MUDA([b1,b2,s1,s2]))
 		
 		#VickreyTradeWithExogeneousPrice.LOG = True
 		#print(VickreyTradeWithExogeneousPrice([b1,b2,s1,s2],51))

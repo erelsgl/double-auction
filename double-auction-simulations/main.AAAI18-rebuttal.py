@@ -16,7 +16,7 @@ import math
 import os
 import random
 
-from doubleauction import MIDA,WALRAS,walrasianEquilibrium,randomTradeWithExogeneousPrice
+from doubleauction import MUDA,WALRAS,walrasianEquilibrium,randomTradeWithExogeneousPrice
 import torq_datasets_read as torq
 from random_datasets import randomAuctions
 
@@ -24,7 +24,7 @@ COLUMNS=(
 	'Total buyers', 'Total sellers', 'Total traders', 'Min total traders', 'Total units', 
 	'Max units per trader', 'Min units per trader', 'Normalized max units per trader', 'stddev',
 	'Optimal buyers', 'Optimal sellers', 'Optimal units',
-	'Optimal gain', 'MIDA-lottery gain', 'MIDA-Vickrey traders gain', 'MIDA-Vickrey total gain')
+	'Optimal gain', 'MUDA-lottery gain', 'MUDA-Vickrey traders gain', 'MUDA-Vickrey total gain')
 
 def replicaAuctions(replicaNums:list, auctions:list):
 	"""
@@ -68,13 +68,13 @@ def simulateAuctions(auctions:list, resultsFilename:str, keyColumns:list):
 		minUnitsPerTrader = min(unitsPerTrader)
 		stddev = np.sqrt(sum([t.totalUnits()**2 for t in traders]))
 		(buyersWALRAS, sellersWALRAS, sizeWALRAS, gainWALRAS) = WALRAS(traders)
-		(sizeMIDALottery, gainMIDALottery, gainMIDALottery, sizeMIDAVickrey, tradersGainMIDAVickrey, totalGainMIDAVickrey) = MIDA(traders, Lottery=True, Vickrey=True)
+		(sizeMUDALottery, gainMUDALottery, gainMUDALottery, sizeMUDAVickrey, tradersGainMUDAVickrey, totalGainMUDAVickrey) = MUDA(traders, Lottery=True, Vickrey=True)
 		resultsRow = [
 			*auctionID,
 			totalBuyers, totalSellers, totalBuyers+totalSellers, min(totalBuyers,totalSellers), sum(unitsPerTrader),
 			maxUnitsPerTrader, minUnitsPerTrader, maxUnitsPerTrader/max(1,minUnitsPerTrader), stddev,
 			buyersWALRAS, sellersWALRAS, sizeWALRAS,
-			gainWALRAS, gainMIDALottery, tradersGainMIDAVickrey, totalGainMIDAVickrey]
+			gainWALRAS, gainMUDALottery, tradersGainMUDAVickrey, totalGainMUDAVickrey]
 		print("\t{}".format(resultsRow))
 		results.loc[len(results)] = resultsRow
 		results.to_csv(resultsFilenameTemp)
@@ -105,7 +105,7 @@ def torqSimulateBySymbol(filename, combineByOrderDate=False, agentNums=[100]):
 
 ### PLOTS ###
 
-YLABEL = 'MIDA GFT divided by maximum GFT'
+YLABEL = 'MUDA GFT divided by maximum GFT'
 YLIM   = [0,1.05]
 
 titleFontSize = 20
@@ -150,7 +150,7 @@ def plotResults(resultsFilename=None, xColumn='Min total traders', numOfBins=10,
 	results = results[results['Optimal gain']>0]
 	print(len(results), " auctions with positive optimal gain")
 	
-	for field in ['MIDA-lottery', 'MIDA-Vickrey traders', 'MIDA-Vickrey total']:
+	for field in ['MUDA-lottery', 'MUDA-Vickrey traders', 'MUDA-Vickrey total']:
 		results[field+' ratio'] = results[field+' gain'] / results['Optimal gain']
 		
 	if numOfBins:
@@ -160,9 +160,9 @@ def plotResults(resultsFilename=None, xColumn='Min total traders', numOfBins=10,
 		
 	results_bins.to_csv(resultsFilename+".bins")
 	
-	results_bins.plot(x=xColumn, y='MIDA-Vickrey total ratio', style=['b^-'], ax=ax, markersize=markerSize)
-	results_bins.plot(x=xColumn, y='MIDA-Vickrey traders ratio', style=['gv-'], ax=ax, markersize=markerSize)
-	results_bins.plot(x=xColumn, y='MIDA-lottery ratio', style=['ro-'], ax=ax, markersize=markerSize)
+	results_bins.plot(x=xColumn, y='MUDA-Vickrey total ratio', style=['b^-'], ax=ax, markersize=markerSize)
+	results_bins.plot(x=xColumn, y='MUDA-Vickrey traders ratio', style=['gv-'], ax=ax, markersize=markerSize)
+	results_bins.plot(x=xColumn, y='MUDA-lottery ratio', style=['ro-'], ax=ax, markersize=markerSize)
 
 	#plt.legend(loc=0,prop={'size':legendFontSize})
 	ax.legend_.remove()
@@ -175,7 +175,7 @@ def plotResults(resultsFilename=None, xColumn='Min total traders', numOfBins=10,
 
 ### MAIN PROGRAM ###
 
-MIDA.LOG = randomTradeWithExogeneousPrice.LOG = False
+MUDA.LOG = randomTradeWithExogeneousPrice.LOG = False
 
 def torqSimulation():
 	numOfBins = 100
