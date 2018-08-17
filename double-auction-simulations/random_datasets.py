@@ -8,21 +8,36 @@ Since : 2017-09
 """
 
 import numpy as np
-import pandas as pd
-from pandas import DataFrame
-from pandas.tools import plotting
-import matplotlib.pyplot as plt
-import math
-import os
-from collections import defaultdict
-
 from doubleauction import Trader
-		
+
+
 def randomValuations(minNumOfUnits:int, maxNumOfUnits:int, meanValue:float, maxNoiseSize:float)->list:
+	"""
+	Creates a list of tuples (num-of-units, value) that represents a multi-unit valuation function.
+	Each marginal value is selected at random from [meanValue +- maxNoiseSize].
+
+	:param minNumOfUnits: min num of units with the same marginal valuation.
+	:param maxNumOfUnits: num of units overall.
+	:param meanValue:     average marginal value per unit.
+	:param maxNoiseSize:  deviation in marginal value per unit.
+	:return:
+	"""
 	numOfBundles = maxNumOfUnits // minNumOfUnits
 	return [(minNumOfUnits, meanValue+np.random.uniform(-maxNoiseSize,+maxNoiseSize)) for i in range(numOfBundles)]
 
-def randomAuction(numOfTraders:int, minNumOfUnitsPerTrader:int, maxNumOfUnitsPerTrader:int, meanValue:float, maxNoiseSize:float,fixedNumOfVirtualTraders=False)->list:
+def randomAuction(numOfTraders:int, minNumOfUnitsPerTrader:int, maxNumOfUnitsPerTrader:int, meanValue:float, maxNoiseSize:float, fixedNumOfVirtualTraders=False)->list:
+	"""
+	Creates a set of n buyers and n sellers with random valuations, for simulating a double-auction.
+
+	:param numOfTraders: the number n (number of buyers and number of sellers).
+	:param minNumOfUnitsPerTrader:  min num of units with the same marginal valuation.
+	:param maxNumOfUnitsPerTrader:  total num of units overall.
+	:param meanValue:     average marginal value per unit.
+	:param maxNoiseSize:  deviation in marginal value per unit.
+	:param fixedNumOfVirtualTraders: If false (default) - numOfTraders is the number of real traders, and the number of virtual traders (units) might be larger.
+	                                 If true - fixes the total number of units and determines the number of real traders accordingly.
+	:return: a list of Trader objects
+	"""
 	traders = []
 	if fixedNumOfVirtualTraders:
 		for i in range(numOfTraders // maxNumOfUnitsPerTrader):
@@ -39,6 +54,10 @@ def randomAuction(numOfTraders:int, minNumOfUnitsPerTrader:int, maxNumOfUnitsPer
 
 
 def randomAuctions(numOfAuctions:int, numOfTraderss:int, minNumOfUnitsPerTrader:int, maxNumOfUnitsPerTraders:int, meanValue:float, maxNoiseSizes:float, fixedNumOfVirtualTraders=False):
+	"""
+	A generator, generates a sequence of numOfAuctions random auctions using randomAuction.
+	The parameters after numOfAuctions are passed to randomAuction.
+	"""
 	for i in range(numOfAuctions):
 		for numOfTraders in numOfTraderss:
 			for maxNumOfUnitsPerTrader in maxNumOfUnitsPerTraders:
@@ -49,8 +68,13 @@ def randomAuctions(numOfAuctions:int, numOfTraderss:int, minNumOfUnitsPerTrader:
 ### MAIN PROGRAM ###
 
 if __name__ == "__main__":
-	print(randomValuations(2, 10,      500, 100))
-	print(randomAuction(5, 10, 30,     100, 40))
+	print("randomValuations demo:")
+	print(randomValuations(minNumOfUnits=2, maxNumOfUnits=10,      meanValue=500, maxNoiseSize=100))
+
+	print("\nrandomAuction demo:")
+	print(randomAuction(numOfTraders=5, minNumOfUnitsPerTrader=10, maxNumOfUnitsPerTrader=30, meanValue=100, maxNoiseSize=40, fixedNumOfVirtualTraders=False))
 	print(randomAuction(500, 100, 300,   100, 40,fixedNumOfVirtualTraders=True))
 	print(randomAuction(5000, 1000, 3000, 100, 40,fixedNumOfVirtualTraders=True))
+
+	print("\nrandomAuctions demo:")
 	print(list(randomAuctions(2, [3], 10, [20,50], 100, [20,40])))
