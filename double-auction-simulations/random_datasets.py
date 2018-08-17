@@ -11,7 +11,7 @@ import numpy as np
 from doubleauction import Trader
 
 
-def randomValuations(minNumOfUnits:int, maxNumOfUnits:int, meanValue:float, maxNoiseSize:float)->list:
+def randomValuations(minNumOfUnits:int, maxNumOfUnits:int, meanValue:float, maxNoiseSize:float, round:bool=False, index:int=None)->list:
 	"""
 	Creates a list of tuples (num-of-units, value) that represents a multi-unit valuation function.
 	Each marginal value is selected at random from [meanValue +- maxNoiseSize].
@@ -20,10 +20,19 @@ def randomValuations(minNumOfUnits:int, maxNumOfUnits:int, meanValue:float, maxN
 	:param maxNumOfUnits: num of units overall.
 	:param meanValue:     average marginal value per unit.
 	:param maxNoiseSize:  deviation in marginal value per unit.
+	:param round: if True, round valuations to nearest integer.
+	:param index: if given, add this index to each virtual-valuation, for tracking purposes.
 	:return:
+
 	"""
 	numOfBundles = maxNumOfUnits // minNumOfUnits
-	return [(minNumOfUnits, meanValue+np.random.uniform(-maxNoiseSize,+maxNoiseSize)) for i in range(numOfBundles)]
+	result = []
+	for i in range(numOfBundles):
+		val = meanValue + np.random.uniform(-maxNoiseSize,+maxNoiseSize)
+		if round: val = int(np.round(val))
+		tupleToAdd = (minNumOfUnits, val, index) if index is not None else (minNumOfUnits, val)
+		result.append(tupleToAdd)
+	return result
 
 def randomAuction(numOfTraders:int, minNumOfUnitsPerTrader:int, maxNumOfUnitsPerTrader:int, meanValue:float, maxNoiseSize:float, fixedNumOfVirtualTraders=False)->list:
 	"""
@@ -70,6 +79,8 @@ def randomAuctions(numOfAuctions:int, numOfTraderss:int, minNumOfUnitsPerTrader:
 if __name__ == "__main__":
 	print("randomValuations demo:")
 	print(randomValuations(minNumOfUnits=2, maxNumOfUnits=10,      meanValue=500, maxNoiseSize=100))
+	print(randomValuations(minNumOfUnits=2, maxNumOfUnits=10,      meanValue=500, maxNoiseSize=100, round=True))
+	print(randomValuations(minNumOfUnits=2, maxNumOfUnits=10,      meanValue=500, maxNoiseSize=100, round=True, index=99))
 
 	print("\nrandomAuction demo:")
 	print(randomAuction(numOfTraders=5, minNumOfUnitsPerTrader=10, maxNumOfUnitsPerTrader=30, meanValue=100, maxNoiseSize=40, fixedNumOfVirtualTraders=False))
@@ -77,4 +88,7 @@ if __name__ == "__main__":
 	print(randomAuction(5000, 1000, 3000, 100, 40,fixedNumOfVirtualTraders=True))
 
 	print("\nrandomAuctions demo:")
-	print(list(randomAuctions(2, [3], 10, [20,50], 100, [20,40])))
+	for auctionID,traders in randomAuctions(2, [3], 10, [20,50], 100, [20,40]):
+		print("auctionID: ", auctionID)
+		print("traders: ", traders)
+		print()

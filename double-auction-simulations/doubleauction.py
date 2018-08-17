@@ -12,156 +12,15 @@ import functools
 import math
 import random
 from collections import defaultdict
+from traders import *
 
 
-class Trader:
-	"""
-	Represents a multi-unit trader with decreasing-marginal-returns (DMR).
-	"""
-
-	def __init__(self, isBuyer:bool, valuations:list):
-		"""
-		valuations is a list of pairs. Each pair is of the form (numUnits,value).
-		They will be sorted automatically by decreasing/increasing value for a buyer/seller resp.
-		"""
-		self.valuations = sorted(valuations, key=itemgetter(1), reverse=isBuyer)
-		self.isBuyer = isBuyer
-		
-	def totalUnits(self):
-		"""
-		Return the total number of units this agent demands/offers.
-		
-		>>> Trader(True,((2, 100), (3,200), (4,150))).totalUnits()
-		9
-		"""
-		return sum([v[0] for v in self.valuations])
-		
-	def abovePrice(self, price:float)->list:
-		"""
-		Return only the valuations with value above the given price.
-		"""
-		return [v for v in self.valuations if v[1]>price]
-		
-	def belowPrice(self, price:float)->list:
-		"""
-		Return only the valuations with value below the given price.
-		"""
-		return [v for v in self.valuations if v[1]<price]
-		
-	def demand(self, price:float)->int:
-		"""
-		The demand of the given agent in the given price.
-		>>> Trader(True,((2, 100), (3,200), (4,150))).demand(151)
-		3
-		"""
-		return sum([v[0] for v in self.abovePrice(price)])
-		
-	def demandValue(self, price:float)->int:
-		"""
-		The total value of the demand of the given agent in the given price.
-		>>> Trader(True,((2, 100), (3,200), (4,150))).demandValue(151)
-		600
-		"""
-		return sum([v[0]*v[1] for v in self.abovePrice(price)])
-		
-	def supply(self, price:float)->int:
-		"""
-		The supply of the given agent in the given price.
-		>>> Trader(True,((2, 100), (3,200), (4,150))).supply(151)
-		6
-		"""
-		return sum([v[0] for v in self.valuations if v[1]<price])
-		
-	def supplyValue(self, price:float)->int:
-		"""
-		The total value of the supply of the given agent in the given price.
-		>>> Trader(True,((2, 100), (3,200), (4,150))).supplyValue(151)
-		800
-		"""
-		return sum([v[0]*v[1] for v in self.valuations if v[1]<price])
-		
-	def __repr__(self):
-		return ('B' if self.isBuyer else 'S') + self.valuations.__repr__()
-
-
-	### Static factory methods:
-	
-	def Buyer(valuations:list):
-		"""
-		A helper function to create a buyer.
-		>>> Trader.Buyer(((2, 100), (3,200), (4,150)))
-		B[(3, 200), (4, 150), (2, 100)]
-		"""
-		return Trader(True, valuations)
-
-	def Seller(valuations:list):
-		"""
-		A helper function to create a seller.
-		>>> Trader.Seller(((2, 100), (3,200), (4,150)))
-		S[(2, 100), (4, 150), (3, 200)]
-		"""
-		return Trader(False, valuations)
-
-def virtualTraders(traders:list):
-	"""
-	INPUT: a list of traders.
-	OUTPUT: two lists, one contains the valuations of all buyers, one contains the valuations of all sellers.
-	
-	>>> b1 = Trader.Buyer([[4,100],[3,200]])
-	>>> b2 = Trader.Buyer([[5,150]])
-	>>> s1 = Trader.Seller([[4,100],[3,200]])
-	>>> s2 = Trader.Seller([[5,150]])
-	>>> (b,s) = virtualTraders([b1,s1,b2,s2])
-	>>> b
-	[[3, 200], [4, 100], [5, 150]]
-	>>> s
-	[[4, 100], [3, 200], [5, 150]]
-	"""
-	virtualBuyers  = []
-	virtualSellers = []
-	for trader in traders:
-		if trader.isBuyer:
-			virtualBuyers  += trader.valuations
-		else:
-			virtualSellers += trader.valuations
-	return [virtualBuyers, virtualSellers]
-
-	
-def winningAndLosingTraders(traders:list, quota:int)->tuple:
-	"""
-	INPUT: a list with elements of type (quantity,value,index).
-	
-	OUTPUT: two lists: winning elements and losing elements. The total quantity of the winning items is at most the quota.
-	
-	>>> (winners,losers) = winningAndLosingTraders([(5, 100, 0), (3, 300, 0), (4, 200, 1), (6, 400, 1)], 10)
-	>>> winners
-	[(5, 100, 0), (3, 300, 0), (2, 200, 1)]
-	>>> losers
-	[(2, 200, 1), (6, 400, 1)]
-	"""
-	winners = []
-	losers =  []
-	for v in traders:
-		currentQuantity = v[0]
-		if quota >= currentQuantity:
-			winners.append(v)
-			quota -= currentQuantity
-		elif quota > 0:
-			winningQuantity = quota
-			losingQuantity  = currentQuantity - winningQuantity
-			winners.append( (winningQuantity,)+v[1:] )
-			losers.append( (losingQuantity,)+v[1:] )
-			quota = 0
-		else:
-			losers.append( (currentQuantity,)+v[1:] )
-	return(winners,losers)
-		
 def walrasianEquilibrium(traders:list):
 	"""
 	Calculate a Walrasian equilibrium (aka competitive equilibrium) in a single-type multi-unit market.
 	INPUT: a list of Trader objects, each of which represents valuations with decreasing marginal returns.
 	OUTPUT: (equilibriumPrice, numOfBuyers, numOfSellers, totalUnitsTraded, gainFromTrade)
-	
+
 	>>> b1 = Trader.Buyer([[5,250]])
 	>>> b2 = Trader.Buyer([[4,150],[3,350]])
 	>>> s1 = Trader.Seller([[5,200]])
@@ -197,7 +56,7 @@ def walrasianEquilibrium(traders:list):
 			numOfBuyers += 1
 			price = currentDemandValue
 			if demand+currentDemand > supply:
-		 		units = supply-demand
+				units = supply-demand
 			else:
 				units = currentDemand
 			buyersValue += units*currentDemandValue
@@ -207,7 +66,7 @@ def walrasianEquilibrium(traders:list):
 		else:  # a seller exits the room
 			price = currentSupplyValue
 			if demand > supply-currentSupply:
-		 		units = supply-demand
+				units = supply-demand
 			else:
 				units = currentSupply
 				numOfSellers -= 1
@@ -234,34 +93,20 @@ def randomPartition(theList:list)->(list,list):
 	return (left,right)
 
 
-def virtualTradersWithIndices(traders:list)->list:
-	"""
-	INPUT: A list of lists, each of which contains pairs (quantity, value).
-	
-	OUTPUT: a flattened list of triplets: (quantity, value, index).
-	
-	>>> virtualTradersWithIndices([ [(5,100),(3,300)], [(4,200),(6,400)] ])
-	[(5, 100, 0), (3, 300, 0), (4, 200, 1), (6, 400, 1)]
-	"""
-	return [(v[0],v[1],index)
-		for (index,valuations) in enumerate(traders)
-		for v in valuations
-		]
-	
-	
+
 ############## RANDOM TRADE #################	
 
 def randomTradeWithExogeneousPrice(traders:list, price:float)->tuple:
 	"""
 	Calculates the trade in the given market, when the price is determined exogeneously.
 	Excess demand/supply is settled using a random permutation.
-	
+
 	INPUT: a list of Trader objects, and an exogeneous price.
 	OUTPUT: (totalUnitsTraded, gainFromTrade)
-	
-	TODO: if a trader's value exactly equals the price, 
+
+	TODO: if a trader's value exactly equals the price,
 	we should choose for him how many units he trades, to improve gain-from-trade.
-	
+
 	>>> randomTradeWithExogeneousPrice.LOG = False
 	>>> b1 = Trader.Buyer([[5,250]])
 	>>> b2 = Trader.Buyer([[4,150],[3,350]])
@@ -276,7 +121,7 @@ def randomTradeWithExogeneousPrice(traders:list, price:float)->tuple:
 	(4, 900)
 	>>> randomTradeWithExogeneousPrice([b1,b2,s1,s2],201)
 	(8, 1100)
-	"""	
+	"""
 	activeBuyers =  [t.abovePrice(price) for t in traders if t.isBuyer]
 	random.shuffle(activeBuyers)
 	activeSellers = [t.belowPrice(price) for t in traders if not t.isBuyer]
@@ -320,12 +165,12 @@ def unitsByIndex(traders:list)->dict:
 		curUnits = t[0]
 		units[curIndex] += curUnits
 	return units
-	
-	
+
+
 def winnerPayment(winnerIndex:int, winnerUnits:int, losers:list)->float:
 	"""
 	Calculate Vickrey payments for a single winner in a multi-unit auction.
-	
+
 	>>> losers = [(2, 200, 0), (6, 400, 1), (999999, 500, -1)]
 	>>> winnerPayment(0, 5, losers)
 	2000
@@ -342,17 +187,17 @@ def winnerPayment(winnerIndex:int, winnerUnits:int, losers:list)->float:
 		else: # winnerUnits < loserUnits
 			payment += winnerUnits*loserValue
 			return payment
-	
+
 
 RESERVE_AGENT = -1
 def VickreyTradeWithExogeneousPrice(traders:list, price:float)->tuple:
 	"""
 	Calculates the trade in the given market, when the price is determined exogeneously.
 	Excess demand/supply is settled using a Vickrey auction.
-	
+
 	INPUT: a list of Trader objects, and an exogeneous price.
 	OUTPUT: (numOfBuyers, numOfSellers, totalUnitsTraded, tradersGain, totalGain)
-	
+
 	>>> b1 = Trader.Buyer([[5,250]])
 	>>> b2 = Trader.Buyer([[4,150],[3,350]])
 	>>> s1 = Trader.Seller([[5,200]])
@@ -371,10 +216,10 @@ def VickreyTradeWithExogeneousPrice(traders:list, price:float)->tuple:
 	if (VickreyTradeWithExogeneousPrice.LOG):
 		print("activeBuyers",activeBuyers)
 		print("activeSellers",activeSellers)
-	
+
 	virtualBuyers  = virtualTradersWithIndices(activeBuyers)
 	virtualSellers = virtualTradersWithIndices(activeSellers)
-	
+
 	totalDemand = sum([v[0] for v in virtualBuyers])
 	totalSupply = sum([v[0] for v in virtualSellers])
 
@@ -433,7 +278,7 @@ def MUDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 		* Lottery - handle excess demand/supply using a lottery.
 		* Vickrey - handle excess demand/supply using a Vickrey auction.
 	OUTPUT: (totalUnitsTraded, tradersGain, totalGain)
-	
+
 	>>> b1 = Trader.Buyer([[5,250]])
 	>>> b2 = Trader.Buyer([[4,150],[3,350]])
 	>>> s1 = Trader.Seller([[5,200]])
@@ -448,10 +293,10 @@ def MUDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 	priceRight = walrasianEquilibrium(tradersRight)[0]
 	result = ()
 	if Lottery:
-		if MUDA.LOG: 
+		if MUDA.LOG:
 			print ("Left sub-market: pR=", priceRight, "traders=",tradersLeft)
 		(sizeLeft, gainLeft) = randomTradeWithExogeneousPrice(tradersLeft, priceRight)
-		if MUDA.LOG: 
+		if MUDA.LOG:
 			print ("Right sub-market: pL=", priceLeft, "traders=",tradersRight)
 		(sizeRight, gainRight) = randomTradeWithExogeneousPrice(tradersRight, priceLeft)
 		result += (sizeRight+sizeLeft, gainRight+gainLeft, gainRight+gainLeft)
@@ -459,7 +304,7 @@ def MUDA(traders:list, Lottery=True, Vickrey=False) -> (int,float):
 		(sizeLeft, tradersGainLeft, managerGainLeft, totalGainLeft) = VickreyTradeWithExogeneousPrice(tradersLeft, priceRight)
 		(sizeRight, tradersGainRight, managerGainRight, totalGainRight) = VickreyTradeWithExogeneousPrice(tradersRight, priceLeft)
 		result += (sizeRight+sizeLeft, tradersGainRight+tradersGainLeft, totalGainRight+totalGainLeft)
-	if MUDA.LOG: 
+	if MUDA.LOG:
 		print(result)
 	return result
 MUDA.LOG = False
@@ -475,7 +320,7 @@ def WALRAS(traders:list) -> (int, int, int, float):
 
 
 if __name__ == "__main__":
-	if True: # False: # 
+	if True: # False: #
 		import doctest
 		walrasianEquilibrium.LOG=False
 		doctest.testmod()
@@ -500,7 +345,7 @@ if __name__ == "__main__":
 		#randomTradeWithExogeneousPrice.LOG = False
 		#MUDA.LOG = True
 		#print(MUDA([b1,b2,s1,s2]))
-		
+
 		#VickreyTradeWithExogeneousPrice.LOG = True
 		#print(VickreyTradeWithExogeneousPrice([b1,b2,s1,s2],51))
 		#print(VickreyTradeWithExogeneousPrice([b1,b2,s1,s2],101))
